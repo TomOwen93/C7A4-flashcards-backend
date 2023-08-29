@@ -17,10 +17,16 @@ app.use(express.json()); //add JSON body parser to each following route handler
 app.use(cors()); //add CORS support to each following route handler
 
 app.get("/users", async (_req, res) => {
-    const queryText = "SELECT * FROM USERS;";
-    const result = await client.query(queryText);
+    try {
+        const queryText = "SELECT * FROM USERS;";
+        const result = await client.query(queryText);
 
-    res.status(200).json(result.rows);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        //Recover from error rather than letting system halt
+        console.error(error);
+        res.status(500).send("An error occurred. Check server logs.");
+    }
 });
 
 app.get("/health-check", async (_req, res) => {
@@ -35,10 +41,27 @@ app.get("/health-check", async (_req, res) => {
     }
 });
 
+app.get("/decks/:userid", async (req, res) => {
+    try {
+        const query = "SELECT * FROM DECKS WHERE userid=$1"; //JOIN users ON users.userid=decks.userid WHERE userid=$1;";
+        const userId = req.params.userid;
+        const decks = await client
+            .query(query, [userId])
+            .then((response) => response.rows);
+        res.status(200).json(decks);
+    } catch (error) {
+        //Recover from error rather than letting system halt
+        console.error(error);
+        res.status(500).json("An error occurred. Check server logs.");
+    }
+});
+
 connectToDBAndStartListening();
 
 async function connectToDBAndStartListening() {
     console.log("Attempting to connect to db");
+    // console.log(client)
+
     await client.connect();
     console.log("Connected to db!");
 
