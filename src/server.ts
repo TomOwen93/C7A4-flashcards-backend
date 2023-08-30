@@ -7,6 +7,7 @@ import { setupDBClientConfig } from "./support/setupDBClientConfig";
 import { addDeckRoutes } from "./routing/decks";
 import { addUserRoutes } from "./routing/users";
 import { addGeneralRoutes } from "./routing/general";
+import { addCardRoutes } from "./routing/cards";
 
 dotenv.config(); //Read .env file lines as though they were env vars.
 
@@ -21,6 +22,7 @@ app.use(cors()); //add CORS support to each following route handler
 
 addDeckRoutes(app, client);
 addUserRoutes(app, client);
+addCardRoutes(app, client);
 addGeneralRoutes(app, client);
 
 connectToDBAndStartListening();
