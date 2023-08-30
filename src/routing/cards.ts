@@ -3,9 +3,9 @@ import express from "express";
 
 type Express = ReturnType<typeof express>;
 
-export function addDeckRoutes(app: Express, client: Client) {
-    /* ------- template for /decks request methods -------*/
-    // app.get("/decks/", async (req, res) => {
+export function addCardRoutes(app: Express, client: Client) {
+    /* ------- template for /cards request methods -------*/
+    // app.get("/cards/", async (req, res) => {
     //     try {
     //         const query = "";
     //         const values = [req.params];
@@ -17,9 +17,9 @@ export function addDeckRoutes(app: Express, client: Client) {
     //     }
     // })
 
-    app.get("/decks", async (req, res) => {
+    app.get("/cards", async (req, res) => {
         try {
-            const query = "SELECT * FROM DECKS;";
+            const query = "SELECT * FROM cards;";
             // const values = [""];
             const response = await client.query(query);
             const data = response.rows;
@@ -31,10 +31,10 @@ export function addDeckRoutes(app: Express, client: Client) {
         }
     });
 
-    app.get("/decks/:userid", async (req, res) => {
+    app.get("/cards/:deckid", async (req, res) => {
         try {
-            const query = "SELECT * FROM decks WHERE userid=$1";
-            const values = [req.params.userid];
+            const query = "SELECT * FROM cards WHERE deckid=$1";
+            const values = [req.params.deckid];
             const response = await client.query(query, values);
             const data = response.rows;
             res.status(200).json(data);
@@ -45,11 +45,11 @@ export function addDeckRoutes(app: Express, client: Client) {
         }
     });
 
-    app.post("/decks", async (req, res) => {
+    app.post("/cards", async (req, res) => {
         try {
             const query =
-                "INSERT INTO decks(name, userid) values ($1, $2) RETURNING *";
-            const values = [req.body.name, req.body.userid];
+                "INSERT INTO cards(front, back, deckid) values ($1, $2, $3) RETURNING *";
+            const values = [req.body.front, req.body.back, req.body.deckid];
             const response = await client.query(query, values);
             const data = response.rows[0];
 
@@ -61,18 +61,14 @@ export function addDeckRoutes(app: Express, client: Client) {
         }
     });
 
-    app.delete("/decks/:deckid", async (req, res) => {
+    app.post("/cards/:cardid", async (req, res) => {
         try {
-            const queryCards = `DELETE FROM cards where deckid = $1;`;
-            const queryDecks = `DELETE FROM decks where deckid = $1;`;
-            const values = [req.params.deckid];
-            const responseCards = await client.query(queryCards, values);
-            await client.query(queryDecks, values);
+            const query = "DELETE FROM cards WHERE cardid = $1";
+            const values = [req.params.cardid];
+            const response = await client.query(query, values);
+            const data = response.rows[0];
 
-            const dataCards = responseCards.rows;
-            // const dataDecks = responseDecks.rows;
-
-            res.status(200).json(dataCards);
+            res.status(200).json(data);
         } catch (error) {
             res.status(500).json(
                 `request ${req.url} caused error, check server logs.`
