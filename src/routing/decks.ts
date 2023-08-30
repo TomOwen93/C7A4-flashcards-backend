@@ -79,4 +79,18 @@ export function addDeckRoutes(app: Express, client: Client) {
             );
         }
     });
+
+    app.patch("/decks/:deckid", async (req, res) => {
+        try {
+            const query = "UPDATE decks SET name = $1 WHERE deckid = $2";
+            const values = [req.body.name, req.params.deckid];
+            const response = await client.query(query, values);
+            const data = response.rows;
+            res.status(200).json(data);
+        } catch (error) {
+            res.status(500).json(
+                `request ${req.url} caused error, check server logs.`
+            );
+        }
+    });
 }
