@@ -61,7 +61,7 @@ export function addCardRoutes(app: Express, client: Client) {
         }
     });
 
-    app.post("/cards/:cardid", async (req, res) => {
+    app.delete("/cards/:cardid", async (req, res) => {
         try {
             const query = "DELETE FROM cards WHERE cardid = $1";
             const values = [req.params.cardid];

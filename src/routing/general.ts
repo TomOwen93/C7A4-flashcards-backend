@@ -17,15 +17,13 @@ export function addGeneralRoutes(app: Express, client: Client) {
         }
     });
 
-
     app.get("/reset/database", async (_req, res) => {
         try {
             const query = getResetQuery();
             await client.query(query);
             res.status(200).json("success");
         } catch (error) {
-            res.status(500).json("failed")
+            res.status(500).json("failed");
         }
-    })
-
+    });
 }

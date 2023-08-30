@@ -1,8 +1,5 @@
-
-
-
 export function getResetQuery() {
-const resetQuery = `
+    const resetQuery = `
 DROP TABLE IF EXISTS cards;
 DROP TABLE IF EXISTS decks;
 DROP TABLE IF EXISTS users;
@@ -125,7 +122,7 @@ INSERT INTO cards (deckid, front, back) VALUES
     (3, 'Noir', 'Black'),
     (3, 'Temps', 'Time');
 
-`
+`;
 
-return resetQuery
+    return resetQuery;
 }
