@@ -63,9 +63,25 @@ export function addCardRoutes(app: Express, client: Client) {
 
     app.patch("/cards/:cardid", async (req, res) => {
         try {
-            const query =
-                "UPDATE cards SET front = $1, back = $2  WHERE cardid = $3 RETURNING *";
-            const values = [req.body.front, req.body.back, req.body.cardid];
+            let query = "";
+            let values: string[] = [];
+
+            if (req.body.front === "" && req.body.back === "") {
+                throw new Error();
+            } else if (req.body.front === "") {
+                query =
+                    "UPDATE cards SET back = $1  WHERE cardid = $2 RETURNING *";
+                values = [req.body.back, req.body.cardid];
+            } else if (req.body.back === "") {
+                query =
+                    "UPDATE cards SET front = $1 WHERE cardid = $2 RETURNING *";
+                values = [req.body.front, req.body.cardid];
+            } else {
+                query =
+                    "UPDATE cards SET front = $1, back = $2 WHERE cardid = $3 RETURNING *";
+                values = [req.body.front, req.body.back, req.body.cardid];
+            }
+
             const response = await client.query(query, values);
             const data = response.rows[0];
 
